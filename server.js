@@ -1,159 +1,80 @@
-#!/bin/env node
-//  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
+/*
+ MongoDB 2.4 database added.  Please make note of these credentials:
 
+ Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/
+ Database Name:  dump
+ Password:       rr2RlNQArDKq
+ Username:       admin
 
-/**
- *  Define the sample application.
  */
-var SampleApp = function() {
+var express = require("express");
+var multer = require('multer');
+var cors = require('cors');
+var app = express();
+var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var fs = require('fs');
+var externalArtUploadJs = require("./Server/Model/ArtUpload.js");
 
-    //  Scope.
-    var self = this;
+app.use(express.static(__dirname + '/public'));
+app.use(cors());
+app.use(bodyParser.json());
+
+/* Configure the database*/
+var connectionUrl = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/ArtGalleryFramework';
+mongoose.connect(connectionUrl);
+var artModel = mongoose.model('ArtInformation', externalArtUploadJs.ArtUploadSchema);
+
+/*Configure the multer.*/
+app.use(multer({dest: './uploads/'}).array('uploadedData'));
 
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+app.get('/process', function (req, res) {
+  res.json(process.env);
+});
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
+app.post('/rest/upload', function (req, res) {
+  var artData = JSON.parse(req.body.artData);
+  artData.uploadedImages = [];
+  for (var i = 0; i < req.files.length; i++) {
+    var image = {
+      imageData: fs.readFileSync(req.files[i].path),
+      imageName: req.files[i].originalname,
+      fileName: req.files[i].filename,
+      path: req.files[i].path,
+      size: req.files[i].size,
+      encoding: req.files[i].encoding
     };
+    artData.uploadedImages.push(image);
+    console.log(image);
+  }
+
+  var newArtObject = new artModel(artData);
+  newArtObject.save(function (error, data) {
+    if (error) {
+      res.send({error: error});
+    } else {
+      res.json(data);
+    }
+  });
+
+});
 
 
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
+app.get('/rest/allArts', function (req, res) {
+  var artistName = req.param('artistName');
+  artModel.find({'artistName': artistName}, function (error, art) {
+    if (!error) {
+      res.send(art);
+    } else {
+      res.send(error)
+    }
 
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
+  });
+});
 
+/*Run the server.*/
+var ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
-
-
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
-        }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
-    };
-
-
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
-
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
-        });
-    };
-
-
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
-
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
-
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
-
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
-
-
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
-
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
-
-
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
-
-        // Create the express server and routes.
-        self.initializeServer();
-    };
-
-
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
-        });
-    };
-
-};   /*  Sample Application.  */
-
-
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
-
+app.listen(port, ipAddress);
