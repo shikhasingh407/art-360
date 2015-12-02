@@ -1,10 +1,11 @@
-<md-content class="md-padding" layout="row" layout-wrap layout-align="start">
-    <div flex="50" layout="column" layout-sm="row"  ng-repeat="art in listCtrl.arts">
+<md-content class="md-padding" layout="row" layout-sm="column" layout-wrap layout-align="start">
+    <div flex="33" flex-sm="100" layout="column" layout-sm="row"  ng-repeat="art in listCtrl.arts">
         <md-card>
             <md-card-title>
                 <md-card-title-text>
                     <span class="md-headline">{{art.artName}}</span>
-                    <span class="md-subhead">{{art.artistName}}</span>
+                    <br>
+                    <span class="md-subhead">By - {{art.artistName}}</span>
                 </md-card-title-text>
                 <md-card-title-media>
                     <div class="md-media-lg">
@@ -22,10 +23,10 @@
                 </md-card-title-media>
             </md-card-title>
             <md-card-actions layout="row" layout-align="end center">
-                <md-button class="md-icon-button md-primary" aria-label="Edit">
+                <md-button class="md-icon-button md-primary" aria-label="Settings">
                     <md-icon md-svg-icon="img/icons/ic_mode_edit_black_24px.svg"></md-icon>
                 </md-button>
-                <md-button class="md-icon-button md-primary" aria-label="Delete">
+                <md-button class="md-icon-button md-primary" aria-label="Settings">
                     <md-icon md-svg-icon="img/icons/ic_delete_black_24px.svg"></md-icon>
                 </md-button>
             </md-card-actions>
