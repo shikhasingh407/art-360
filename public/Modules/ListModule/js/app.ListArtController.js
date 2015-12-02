@@ -21,7 +21,7 @@
             }
           },
           function (error) {
-
+            swal("Error", "Fetching your art info failed, Please try again later : " + error, "error");
           });
     }
   }
