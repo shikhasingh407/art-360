@@ -30,7 +30,13 @@
     function uploadArt() {
       var formData = new FormData( document.getElementById("fileUploadForm"));
       formData.append("artData", JSON.stringify(self.form));
-      fileService.uploadArt(formData);
+      fileService.uploadArt(formData).then(function(response) {
+        if (!response.status) {
+          swal("Success", "The art was successfully saved in your database.", "Success");
+        } else {
+          swal("Error", "The art was failed to save, please try again later", "error");
+        }
+      });
     }
 
     function cancel() {
