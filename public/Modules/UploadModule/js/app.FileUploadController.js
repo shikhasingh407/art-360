@@ -7,7 +7,8 @@
 
     var self = this;
 
-    self.artType = ['Contemporary', 'Charcoal-sketch', 'Water-Color'];
+    self.artType = ['Contemporary', 'Charcoal-sketch', 'Water-Color', 'Oil Painting', 'Mural',
+      'Crafts', 'Knife Painting'];
 
     self.uploadArt = uploadArt;
     self.cancel = cancel;

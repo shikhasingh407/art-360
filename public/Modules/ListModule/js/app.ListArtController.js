@@ -12,7 +12,7 @@
     self.getAllArt = getAllArt();
 
     function getAllArt() {
-      fileService.getAllArt('Divyanshi').then(
+      fileService.getAllArt('Divyanshi Rastogi').then(
           function (response) {
             if (response instanceof Array) {
               self.arts = response;
