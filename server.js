@@ -62,7 +62,7 @@ app.post('/rest/upload', function (req, res) {
 
 
 app.get('/rest/allArts', function (req, res) {
-  var artistName = req.param('artistName');
+  var artistName = req.query['artistName'];
   artModel.find({'artistName': artistName}, function (error, art) {
     if (!error) {
       res.send(art);
