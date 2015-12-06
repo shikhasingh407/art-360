@@ -15,14 +15,14 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var fs = require('fs');
 var externalArtUploadJs = require("./Server/Model/ArtUpload.js");
+var externalResources = require("./Server/resources/resources.js");
 
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(bodyParser.json());
 
 /* Configure the database*/
-var connectionUrl = process.env.OPENSHIFT_MONGODB_DB_URL || 'mongodb://localhost/ArtGalleryFramework';
-mongoose.connect(connectionUrl);
+mongoose.connect(externalResources.reources['connectionUrl']);
 var artModel = mongoose.model('ArtInformation', externalArtUploadJs.ArtUploadSchema);
 
 /*Configure the multer.*/
@@ -32,6 +32,15 @@ app.use(multer({dest: './uploads/'}).array('uploadedData'));
 app.get('/process', function (req, res) {
   res.json(process.env);
 });
+
+/*Run the server.*/
+var ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+
+app.listen(port, ipAddress);
+
+
+// CRUD FUNCTION CALLS FOR ART
 
 app.post('/rest/upload', function (req, res) {
   var artData = JSON.parse(req.body.artData);
@@ -73,8 +82,33 @@ app.get('/rest/allArts', function (req, res) {
   });
 });
 
-/*Run the server.*/
-var ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
 
-app.listen(port, ipAddress);
+
+
+// CRUD FUNCTION CALLS FOR ARTIST
+
+var externalArtistDAO = require('./Server/DAO/ArtistInformationDAO.js');
+
+app.get('/rest/artists/:email', function(req, res) {
+  externalArtistDAO.service.getArtistInformation(req).then(function (response) {
+    res.send(response);
+  });
+});
+
+app.post('/rest/artists', function(req, res) {
+  externalArtistDAO.service.postArtistInformation(req).then(function(response) {
+    res.send(response);
+  });
+});
+
+app.put('/rest/artists', function(req, res) {
+  externalArtistDAO.service.updateArtistInformation(req).then(function(response) {
+    res.send(response);
+  });
+});
+
+app.delete('/rest/artists', function(req, res) {
+  externalArtistDAO.service.deleteArtistInformation(req).then(function(response) {
+    res.send(response);
+  });
+});

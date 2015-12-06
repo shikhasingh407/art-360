@@ -45,6 +45,10 @@
             templateUrl: 'Modules/ListModule/listArt.html',
             controller: 'ListArtController',
             controllerAs: 'listCtrl'
+          }).when('/artist', {
+            templateUrl: 'Modules/ArtistModule/NewArtist.html',
+            controller: 'ArtistController',
+            controllerAs: 'artistCtrl'
           }).
           otherwise({
             redirectTo: 'public/index.html'

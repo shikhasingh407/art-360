@@ -14,8 +14,8 @@ exports.ArtUploadSchema = new Schema({
   sellingSince: Date,
   uploadedImages: []
 //{
-//  imageData : Buffer,
-//      imageName : String,
+//    imageData : Buffer,
+//    imageName : String,
 //    fileName : String,
 //    path : String,
 //    size : Number

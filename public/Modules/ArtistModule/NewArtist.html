@@ -1,0 +1,69 @@
+<div layout="column" ng-cloak>
+    <br/>
+
+    <div layout="row" layout-sm="column">
+        <md-input-container class="md-icon-float md-block" flex="50">
+            <md-icon md-svg-src="img/icons/ic_perm_identity_black_24px.svg"></md-icon>
+            <input ng-model="artistCtrl.getArtistWithEmail" type="text"
+                   placeholder="Fetch Artist Information from his email">
+        </md-input-container>
+        <md-button ng-click="artistCtrl.getArtist(artistCtrl.getArtistWithEmail)">Get</md-button>
+    </div>
+    <form name="artistForm">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Artist</h3>
+            </div>
+            <div class="panel-body">
+                <md-content layout-padding>
+                    <md-input-container class="md-icon-float md-block">
+                        <md-icon md-svg-src="img/icons/ic_perm_identity_black_24px.svg"></md-icon>
+                        <input ng-model="artistCtrl.artist.name" name="artistName" type="text"
+                               placeholder="Name (required)" ng-required="true">
+                    </md-input-container>
+                    <md-input-container md-no-float class="md-block">
+                        <md-icon md-svg-src="img/icons/ic_phone_black_24px.svg"></md-icon>
+                        <input ng-model="artistCtrl.artist.phone" min="100000" max="9999999999" step="1" type="number"
+                               placeholder="Phone Number">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <!-- Use floating placeholder instead of label -->
+                        <md-icon md-svg-src="img/icons/ic_email_black_24px.svg"></md-icon>
+                        <input ng-model="artistCtrl.artist.email" type="email" placeholder="Email (required)"
+                               ng-required="true">
+                    </md-input-container>
+                    <md-input-container class="md-block">
+                        <!-- Use floating placeholder instead of label -->
+                        <md-icon md-svg-src="img/icons/ic_vpn_key_black_24px.svg"></md-icon>
+                        <input ng-model="artistCtrl.artist.password" type="password" placeholder="Password (required)"
+                               ng-required="true">
+                    </md-input-container>
+                    <md-input-container md-no-float class="md-block">
+                        <md-icon md-svg-src="img/icons/ic_room_black_24px.svg"
+                                 style="display:inline-block"></md-icon>
+                        <input ng-model="artistCtrl.artist.address" type="text" placeholder="Address">
+                    </md-input-container>
+
+
+                    <md-datepicker ng-model="artistCtrl.artist.dob"></md-datepicker>
+
+                    <!--<lf-ng-md-file-input lf-files="files05" drag preview ></lf-ng-md-file-input>-->
+
+                    <!--<lf-ng-md-file-input lf-files="files" lf-placeholder="Pick Image" drag preview></lf-ng-md-file-input>-->
+                    <br>
+                </md-content>
+            </div>
+
+            <div class="panel-footer clearfix">
+                <md-button class="md-raised md-primary md-fab" ng-click="artistCtrl.postOrUpdateArtist()"
+                           ng-disabled="artistForm.$invalid">
+                    <md-icon md-svg-src="img/icons/ic_mode_edit_black_24px.svg"></md-icon>
+                </md-button>
+                <md-button class="md-raised md-primary md-fab" ng-click="artistCtrl.disableArtist()"
+                           ng-disabled="artistForm.$invalid">
+                    <md-icon md-svg-src="img/icons/ic_delete_black_24px.svg"></md-icon>
+                </md-button>
+            </div>
+        </div>
+    </form>
+</div>

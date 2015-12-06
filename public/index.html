@@ -6,12 +6,13 @@
     <!-- Angular Material Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-animate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-animate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-aria.min.js"></script>
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
 
     <!-- Angular Material CSS now available via Google CDN; version 1.0.0-RC1 used here -->
     <link rel="stylesheet"
@@ -22,18 +23,26 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css"/>
 
+    <link rel="stylesheet" href="VendorsData/css/lf-ng-md-file-input.css">
+    <script src="VendorsData/js/lf-ng-md-file-input.js"></script>
+
     <!-- custom scripts -->
 
-    <!-- Upload Module -->
+    <!-- Art Upload Module -->
     <script src="app.FileUpload.js"></script>
-    <script src="./Modules/UploadModule/js/app.FileUploadController.js"></script>
+    <script src="./Modules/ArtUploadModule/js/app.FileUploadController.js"></script>
     <script src="./Services/app.FileService.js"></script>
 
-    <!-- List Module -->
-    <script src="./Modules/ListModule/js/app.ListArtController.js"></script>
+    <!-- Art List Module -->
+    <script src="./Modules/ArtListModule/js/app.ListArtController.js"></script>
+
+    <!-- Artist CRUD Module-->
+    <link rel="stylesheet" href="Modules/ArtistModule/artistCss.css">
+    <script src="./Modules/ArtistModule/js/ArtistController.js"></script>
+    <script src="./Services/app.ArtistService.js"></script>
 
     <meta charset="UTF-8">
-    <title>Upload File</title>
+    <title>Artopia</title>
 </head>
 <body ng-app="FileUpload">
 
