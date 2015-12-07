@@ -42,6 +42,8 @@
         if (!response.status) {
           if (self.artist.hasOwnProperty('length') && self.artist.length > 0) {
             self.artist = response[0];
+          } else if (response instanceof Object && response.email){
+            self.artist = response;
           }
           if (self.artist['dob']) {
             self.artist['dob'] = new Date(self.artist['dob']);
