@@ -29,6 +29,9 @@
       function responseHandler(response) {
         if (!response.status) {
           self.artist = response;
+          if (self.artist['dob']) {
+            self.artist['dob'] = new Date(self.artist['dob']);
+          }
           swal("Success", "Your data was saved successfully", "success");
         } else {
           swal("Error", "Couldn't save the data : " + response, "error");
@@ -40,11 +43,7 @@
       self.artist = {};
       return artistService.getArtist(email).then(function (response) {
         if (!response.status) {
-          if (self.artist.hasOwnProperty('length') && self.artist.length > 0) {
-            self.artist = response[0];
-          } else if (response instanceof Object && response.email){
-            self.artist = response;
-          }
+          self.artist = response;
           if (self.artist['dob']) {
             self.artist['dob'] = new Date(self.artist['dob']);
           }

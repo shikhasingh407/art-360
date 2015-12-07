@@ -6,9 +6,9 @@
   function ArtistService($http) {
 
     var service = {
-      postArtistInformation : postArtistInformation,
+      postArtistInformation: postArtistInformation,
       updateArtistInformation: updateArtistInformation,
-      getArtist : getArtist
+      getArtist: getArtist
     };
 
     function postArtistInformation(formData) {
@@ -30,20 +30,21 @@
     }
 
     function getArtist(name) {
-      return $http.get("/rest/artists/"+ name).then(successfulProcess).catch(failedProcess);
+      return $http.get("/rest/artists/" + name).then(successfulProcess).catch(failedProcess);
     }
 
     function successfulProcess(response) {
-      if (response.data.length > 0)
+      if (!response.data.hasOwnProperty("length"))
+        return response.data;
+      else if (response.data.length > 0)
         return response.data[0];
       else
-        return response.data;
+        return response;
     }
 
     function failedProcess(error) {
       return error;
     }
-
 
 
     return service;

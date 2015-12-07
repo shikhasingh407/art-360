@@ -19,7 +19,7 @@
 
 
   function getArtistInformation(req) {
-    return artistModel.find(req.params, function (error, artist) {
+    return artistModel.findOne(req.params, function (error, artist) {
       if (!error) {
         return artist;
       } else {
@@ -43,11 +43,15 @@
   function updateArtistInformation(req) {
     console.log("update function");
     var artistData = getArtistUploadData(req);
-    return artistModel.findOneAndUpdate(artistData).then(function (doc, err) {
-      if (!err)
+    return artistModel.findOneAndUpdate({_id : artistData._id},artistData, {new: true}).then(function (doc, err) {
+      if (!err) {
+        console.log(doc);
         return doc;
-      else
+      }
+      else {
+        console.log(err);
         return err;
+      }
     });
   }
 
