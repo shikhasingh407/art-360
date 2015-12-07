@@ -37,12 +37,12 @@
             redirectTo: 'public/index.html'
           }).
           when('/art', {
-            templateUrl: 'Modules/UploadModule/UploadForm.html',
+            templateUrl: 'Modules/ArtUploadModule/UploadForm.html',
             controller: 'FileUploadController',
             controllerAs: 'uploadCtrl'
           }).
           when('/art/list', {
-            templateUrl: 'Modules/ListModule/listArt.html',
+            templateUrl: 'Modules/ArtListModule/listArt.html',
             controller: 'ListArtController',
             controllerAs: 'listCtrl'
           }).when('/artist', {

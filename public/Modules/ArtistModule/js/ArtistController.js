@@ -1,9 +1,9 @@
 (function () {
   angular.module("FileUpload").controller('ArtistController', ArtistController);
 
-  ArtistController.$inject = ['ArtistService', '$filter'];
+  ArtistController.$inject = ['ArtistService', '$scope'];
 
-  function ArtistController(artistService) {
+  function ArtistController(artistService, $scope) {
     var self = this;
 
     self.artist = {};
@@ -11,9 +11,10 @@
     self.postOrUpdateArtist = postOrUpdateArtist;
     self.getArtist = getArtist;
     self.disableArtist = disableArtist;
+    $scope.showDisplayPic = showDisplayPic;
 
     function postOrUpdateArtist() {
-      var fd = new FormData();
+      var fd = new FormData(document.getElementById("artistForm"));
       if (self.artist.hasOwnProperty('length') && self.artist.length > 0) {
         fd.append('artistData', JSON.stringify(self.artist[0]));
       } else {
@@ -36,15 +37,16 @@
     }
 
     function getArtist(email) {
-      artistService.getArtist(email).then(function (response) {
+      self.artist = {};
+      return artistService.getArtist(email).then(function (response) {
         if (!response.status) {
           if (self.artist.hasOwnProperty('length') && self.artist.length > 0) {
             self.artist = response[0];
-          } else
-            self.artist = response;
+          }
           if (self.artist['dob']) {
             self.artist['dob'] = new Date(self.artist['dob']);
           }
+          return self.artist;
         } else {
           swal("Error", "Artist not found", "error");
         }
@@ -52,8 +54,29 @@
     }
 
     function disableArtist() {
+      getArtist(self.artist.email).then(function (response) {
+        if (!response.status) {
+          response.isActive = false;
+          postOrUpdateArtist();
+        }
+      });
+    }
+
+    function showDisplayPic() {
+      var element = document.getElementById('triggerDisplayPic');
+      self.currentFile = element.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (event) {
+        self.displayPic = event.target.result;
+        $scope.$apply();
+      };
+
+      // when the file is read it triggers the onload event above.
+      reader.readAsDataURL(element.files[0]);
 
     }
+
 
   }
 

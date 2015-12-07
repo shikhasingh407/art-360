@@ -3,7 +3,7 @@
   var express = require("express");
   var multer = require('multer');
   var cors = require('cors');
-  //var bodyParser = require('body-parser');
+  var bodyParser = require('body-parser');
   var mongoose = require('mongoose');
   var fs = require('fs');
 
@@ -64,7 +64,7 @@
 
   function getArtistUploadData(req) {
     var artistData = JSON.parse(req.body.artistData);
-    artistData.displayPics = [];
+    artistData.displayPic = [];
     for (var i = 0; i < req.files.length; i++) {
       var image = {
         imageData: fs.readFileSync(req.files[i].path),
@@ -74,7 +74,7 @@
         size: req.files[i].size,
         encoding: req.files[i].encoding
       };
-      artistData.displayPics.push(image);
+      artistData.displayPic.push(image);
       console.log(image);
     }
 
