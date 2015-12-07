@@ -51,8 +51,8 @@
                         <md-subheader class="md-no-sticky">Display Pic:</md-subheader>
                         <md-list-item class="md-2-line" ng-repeat="image in artistCtrl.artist.displayPic">
                             Uploaded Image :
-                                <img flex="50" data-ng-src="data:image/jpeg;base64,{{image.imageData}}"
-                                     class="md-avatar" style="width: 10%; height: 10%"/></h4>
+                            <img flex="33" flex-sm="100" data-ng-src="data:image/jpeg;base64,{{image.imageData}}"
+                                 class="md-avatar" style="width: 10%; height: 10%"/></h4>
                         </md-list-item>
                         <md-list-item layout-sm="column">
                             <input flex="33" type="file" id="triggerDisplayPic" ng-model="artistCtrl.displayPic"
