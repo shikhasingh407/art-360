@@ -43,16 +43,19 @@
   function updateArtistInformation(req) {
     console.log("update function");
     var artistData = getArtistUploadData(req);
-    return artistModel.findOneAndUpdate({_id : artistData._id},artistData, {new: true}).then(function (doc, err) {
-      if (!err) {
-        console.log(doc);
-        return doc;
-      }
-      else {
-        console.log(err);
-        return err;
-      }
-    });
+    var artistDataClone = JSON.parse(JSON.stringify(artistData));
+    delete artistDataClone['_id'];
+    return artistModel.findOneAndUpdate({_id: artistData._id}, artistDataClone, {new: true}).then(
+        function (doc, err) {
+          if (!err) {
+            console.log(doc);
+            return doc;
+          }
+          else {
+            console.log(err);
+            return err;
+          }
+        });
   }
 
   function deleteArtistInformation(req) {
