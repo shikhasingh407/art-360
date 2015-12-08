@@ -34,7 +34,7 @@
           }
           swal("Success", "Your data was saved successfully", "success");
         } else {
-          swal("Error", "Couldn't save the data : " + response, "error");
+          swal("Error", "Couldn't save the data : " + response.data, "error");
         }
       }
     }
