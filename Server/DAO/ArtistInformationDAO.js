@@ -14,9 +14,29 @@
     getArtistInformation: getArtistInformation,
     postArtistInformation: postArtistInformation,
     updateArtistInformation: updateArtistInformation,
-    deleteArtistInformation: deleteArtistInformation
+    deleteArtistInformation: deleteArtistInformation,
+    createArtist: createArtist,
+    findArtistById: findArtistById,
+    findArtistByCredentials: findArtistByCredentials,
+    findArtistByUsername: findArtistByUsername
   };
 
+  function findArtistByCredentials(username, password) {
+    return artistModel.findOne({username: username, password: password});
+  }
+  function findArtistById(artistId) {
+    return artistModel.findById(artistId);
+  }
+
+  function findArtistByUsername(username, password){
+    return artistModel.findOne({username : username});
+  }
+
+  function createArtist(artist) {
+    //console.log("user.model.server.createUser()");
+    //console.log(user);
+    return artistModel.create(artist);
+  }
 
   function getArtistInformation(req) {
     return artistModel.findOne(req.params, function (error, artist) {
@@ -27,6 +47,7 @@
       }
     });
   }
+
 
   function postArtistInformation(req) {
     var artistData = getArtistUploadData(req);

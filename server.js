@@ -17,6 +17,11 @@ var fs = require('fs');
 var externalArtUploadJs = require("./Server/Model/ArtUpload.js");
 var externalResources = require("./Server/resources/resources.js");
 
+var passport      = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+var cookieParser  = require('cookie-parser');
+var session       = require('express-session');
+
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(bodyParser.json());

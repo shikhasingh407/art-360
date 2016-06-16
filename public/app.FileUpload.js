@@ -32,10 +32,29 @@
       })
       .config(['$routeProvider',
         function ($routeProvider) {
-          $routeProvider.
-          when('/', {
-            redirectTo: 'public/index.html'
-          }).
+          $routeProvider
+              .when("/", {
+                  templateUrl: "Modules/ArtistModule/Login.html",
+                  controller: "LoginController",
+                  controllerAs: "model"
+              })
+              .when("/login", {
+                templateUrl: "Modules/ArtistModule/Login.html",
+                controller: "LoginController",
+                controllerAs: "model"
+              })
+              //.when("/NewArtist", {
+              //  templateUrl: "Modules/ArtistModule/NewArtist.html",
+              //  controller: "ArtistController",
+              //  controllerAs: "artistCtrl"
+              //})
+              .when("/artist/:id", {
+                templateUrl: "Modules/home.html",
+                //controller: "ProfileController",
+                controllerAs: "model"
+              })
+
+              .
           when('/art', {
             templateUrl: 'Modules/ArtUploadModule/UploadForm.html',
             controller: 'FileUploadController',

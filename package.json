@@ -34,6 +34,7 @@
     "cookie-parser": "^1.4.3",
     "cors": "^2.7.1",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "fs": "0.0.2",
     "jquery": "^2.1.4",
     "mongoose": "^4.2.8",

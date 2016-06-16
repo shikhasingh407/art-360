@@ -8,8 +8,38 @@
     var service = {
       postArtistInformation: postArtistInformation,
       updateArtistInformation: updateArtistInformation,
-      getArtist: getArtist
+      getArtist: getArtist,
+      createArtist: createArtist,
+      findArtistByUsernameAndPassword: findArtistByUsernameAndPassword,
+      login: login,
+      findArtistById: findArtistById
+      //deleteArtist: deleteArtist
+
     };
+
+
+     function createArtist(newArtist){
+      return $http.post("/rest/artist", newArtist);
+    }
+
+    function findArtistById(id){
+      var url = "/rest/artist/" + id;
+      return $http.get(url);
+    }
+
+    function login(username, password){
+      var url = "/rest/login";
+      var artist = {
+        username: username,
+        password: password
+      };
+
+      return $http.post(url, artist);
+    }
+    function findArtistByUsernameAndPassword(username, password){
+      var url = "/rest/artist?username="+username+"&password="+password;
+      return $http.get(url);
+    }
 
     function postArtistInformation(formData) {
       return $http.post("/rest/artists", formData, {
