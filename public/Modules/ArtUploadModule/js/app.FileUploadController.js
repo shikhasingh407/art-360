@@ -5,7 +5,7 @@
 
   function FileUploadController (fileService) {
 
-    var self = this;
+    var self = this; // this = uploadCtrl = $scope
 
     self.artType = ['Contemporary', 'Charcoal-sketch', 'Water-Color', 'Oil Painting', 'Mural',
       'Crafts', 'Knife Painting'];

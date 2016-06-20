@@ -10,11 +10,12 @@
       updateArtistInformation: updateArtistInformation,
       getArtist: getArtist,
       createArtist: createArtist,
+      logout: logout,
+      loggedIn:loggedIn,
       findArtistByUsernameAndPassword: findArtistByUsernameAndPassword,
       login: login,
       findArtistById: findArtistById
       //deleteArtist: deleteArtist
-
     };
 
 
@@ -27,6 +28,15 @@
       return $http.get(url);
     }
 
+    function loggedIn(){
+      return $http.get("/rest/loggedin");
+    }
+
+    function logout(){
+      return $http.post("/rest/logout");
+    }
+
+
     function login(username, password){
       var url = "/rest/login";
       var artist = {
@@ -34,7 +44,7 @@
         password: password
       };
 
-      return $http.post(url, artist);
+      return $http.post(url, artist).then(successfulProcess).catch(failedProcess);
     }
     function findArtistByUsernameAndPassword(username, password){
       var url = "/rest/artist?username="+username+"&password="+password;
@@ -73,7 +83,7 @@
     }
 
     function failedProcess(error) {
-      return error;
+      return new Error(error);
     }
 
 

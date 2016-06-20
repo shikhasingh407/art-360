@@ -17,25 +17,85 @@
     deleteArtistInformation: deleteArtistInformation,
     createArtist: createArtist,
     findArtistById: findArtistById,
-    findArtistByCredentials: findArtistByCredentials,
-    findArtistByUsername: findArtistByUsername
+    loggedIn: loggedIn,
+    logout: logout,
+    login: login,
+    findArtistByArtistName: findArtistByArtistName
+    //findArtistByCredentials: findArtistByCredentials,
+    //findArtistByUsername: findArtistByUsername
   };
-
-  function findArtistByCredentials(username, password) {
-    return artistModel.findOne({username: username, password: password});
-  }
-  function findArtistById(artistId) {
-    return artistModel.findById(artistId);
-  }
-
-  function findArtistByUsername(username, password){
+  //
+  //function findArtistByUsername (username, res) {
+  //
+  //  artistModel
+  //      .findArtistByUsername(username)
+  //      .then(
+  //          function(artist){
+  //            res.json(artist);
+  //          },
+  //          function(err){
+  //            res.statusCode(404).send(err);
+  //          }
+  //      );
+  //}
+  //
+  //function findArtistByCredentials(username, password, res) {
+  //
+  //  artistModel
+  //      .findArtistByCredentials(username, password)
+  //      .then(
+  //          function(artist){
+  //            res.json(artist);
+  //          },
+  //          function(err){
+  //            res.statusCode(404).send(err);
+  //          }
+  //      );
+  //}
+  //
+  function findArtistByArtistName(username){
     return artistModel.findOne({username : username});
   }
 
-  function createArtist(artist) {
+  function findArtistById (req, res) {
+    var id = req.params.artistId;
+    artistModel
+        .findArtistById(id)
+        .then(
+            function(artist){
+              res.json(artist);
+            },
+            function(err){
+              res.statusCode(404).send(err);
+            }
+        );
+  }
+
+  var FacebookStrategy = require('passport-facebook').Strategy;
+  function loggedIn(req,res){
+    if(req.isAuthenticated()){
+      res.json(req.artist);
+    }
+    else {
+      res.send('0');
+    }
+  }
+
+  function login(req, res) {
+    console.log("IN ArTIST");
+    var artist= req.artist;
+    res.json(artist);
+  }
+
+  function logout(req,res){
+    req.logout();
+    res.send(200);
+  }
+
+  function createArtist(req) {
     //console.log("user.model.server.createUser()");
     //console.log(user);
-    return artistModel.create(artist);
+    return artistModel.create(req.body);
   }
 
   function getArtistInformation(req) {

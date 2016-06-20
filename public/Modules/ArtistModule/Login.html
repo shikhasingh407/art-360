@@ -13,6 +13,7 @@
             <span class="help-inline" ng-show="submitted && loginForm.password.$error.required">*Password is a Required field</span>
         </div>
         <a ng-disabled="loginForm.$invalid" ng-click="loginForm.$valid && model.login(username, password); submitted=true" class="btn btn-primary btn-block">Login</a>
-        <a class="btn btn-success btn-block" href="#/artist">SignUp</a>
+        <a class="btn btn-primary btn-block" href="/auth/facebook"><span class="fa fa-facebook-official"></span> Log in with Facebook</a>
+        <a class="btn btn-success btn-block" href="#/register">Register</a>
     </form>
 </div>

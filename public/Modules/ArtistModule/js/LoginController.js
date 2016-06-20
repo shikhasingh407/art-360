@@ -12,9 +12,9 @@
                 .login(username, password)
                 .then(
                     function(response){
-                        var artist = response.data;
+                        var artist = response;
                         console.log(artist);
-                        if(user){
+                        if(artist){
                             $location.url("/artist/"+ artist._id);
 
                         }
