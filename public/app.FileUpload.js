@@ -1,6 +1,6 @@
 (function () {
   angular
-      .module("FileUpload", ['ngAnimate', 'ngMaterial', 'ui.bootstrap', 'ngRoute'])
+      .module("art", ['ngAnimate', 'ngMaterial', 'ui.bootstrap', 'ngRoute'])
       .config(function ($mdThemingProvider) {
         // Extend the red theme with a few different colors
         var bootstrapPrimaryMap = $mdThemingProvider.extendPalette('blue', {
@@ -43,15 +43,26 @@
                 controller: "LoginController",
                 controllerAs: "model"
               })
-              //.when("/NewArtist", {
-              //  templateUrl: "Modules/ArtistModule/NewArtist.html",
-              //  controller: "ArtistController",
-              //  controllerAs: "artistCtrl"
-              //})
+              .when("/NewArtist", {
+                templateUrl: "Modules/ArtistModule/NewArtist.html",
+                controller: "ArtistController",
+                controllerAs: "artistCtrl"
+              })
+              .when("/profile", {
+                  templateUrl: "Modules/home.html",
+                  controller: "ProfileController",
+                  controllerAs: "model",
+                  resolve: {
+                      loggedIn: checkLoggedIn
+                  }
+              })
               .when("/artist/:id", {
                 templateUrl: "Modules/home.html",
-                //controller: "ProfileController",
-                controllerAs: "model"
+                controller: "ProfileController",
+                  controllerAs: "model",
+                  resolve: {
+                      loggedIn: checkLoggedIn
+                  }
               })
 
               .
@@ -72,6 +83,36 @@
           otherwise({
             redirectTo: 'public/index.html'
           });
+
+            function checkLoggedIn(ArtistService,$location,$q,$rootScope){
+                var deferred = $q.defer();
+                ArtistService
+                    .loggedIn()
+                    .then(
+                        function(response){
+                            var artist=response.data;
+                            console.log(artist);
+                            if(artist == '0'){
+                                $rootScope.currentArtist=null;
+                                deferred.reject();
+                                $location.url("/login");
+                            }
+                            else {
+                                $rootScope.currentArtist=artist;
+                                deferred.resolve();
+                            }
+                        },
+                        function(res){
+                            $location.url("/login");
+                        }
+                    );
+
+                return deferred.promise;
+            }
         }]);
+
+
+
+
 
 })();

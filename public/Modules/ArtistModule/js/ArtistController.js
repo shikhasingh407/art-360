@@ -1,5 +1,5 @@
 (function () {
-  angular.module("FileUpload").controller('ArtistController', ArtistController);
+  angular.module("art").controller('ArtistController', ArtistController);
 
   ArtistController.$inject = ['ArtistService', '$scope'];
 

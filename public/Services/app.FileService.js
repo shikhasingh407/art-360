@@ -1,5 +1,5 @@
 (function () {
-  angular.module("FileUpload").factory('FileService', FileService);
+  angular.module("art").factory('FileService', FileService);
 
   FileService.$inject = ['$http'];
 

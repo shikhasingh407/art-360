@@ -6,6 +6,7 @@
   var bodyParser = require('body-parser');
   var mongoose = require('mongoose');
   var fs = require('fs');
+  var bcrypt = require("bcrypt-nodejs");
 
   var externalArtistInformationJs = require("../Model/ArtistInformation.js");
   var artistModel = mongoose.model('ArtistInformation', externalArtistInformationJs.ArtistInformationSchema);
@@ -20,6 +21,7 @@
     loggedIn: loggedIn,
     logout: logout,
     login: login,
+
     findArtistByArtistName: findArtistByArtistName
     //findArtistByCredentials: findArtistByCredentials,
     //findArtistByUsername: findArtistByUsername
@@ -53,25 +55,17 @@
   //      );
   //}
   //
+
+
   function findArtistByArtistName(username){
     return artistModel.findOne({username : username});
   }
 
   function findArtistById (req, res) {
-    var id = req.params.artistId;
-    artistModel
-        .findArtistById(id)
-        .then(
-            function(artist){
-              res.json(artist);
-            },
-            function(err){
-              res.statusCode(404).send(err);
-            }
-        );
+    return artistModel.findOne({_id: req.params.id});
   }
 
-  var FacebookStrategy = require('passport-facebook').Strategy;
+
   function loggedIn(req,res){
     if(req.isAuthenticated()){
       res.json(req.artist);

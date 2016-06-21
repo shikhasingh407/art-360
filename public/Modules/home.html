@@ -13,7 +13,7 @@
 
 <div class="container">
     <h2>Art-360</h2>
-    <p><b>Welcome Artist</b></p>
+    <p><b>Welcome {{model.artist.username}}</b></p>
 
     <div class="btn-group btn-group-lg">
         <button type="button" class="btn btn-primary">My Portfolios</button>
@@ -24,6 +24,18 @@
     </div>
 
 </div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container-fluid">
+        <div class="navbar-footer">
+            <p class="navbar-text pull-right">
+            <div class="form-group">
+                <a ng-click="model.logout()" class="btn btn-danger btn-block">Logout</a>
+            </div>
+            </p>
+        </div>
+    </div>
+</nav>
 
 </body>
 </html>

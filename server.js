@@ -29,18 +29,18 @@ var bcrypt = require("bcrypt-nodejs");
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(session({ secret: process.env.SESSION_SECRET}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cookieParser());
-app.use(session({ secret: process.env.SESSION_SEC}));
 
 passport.use('local', new LocalStrategy(localStrategy));
 passport.serializeUser(serializeUser);
 passport.deserializeUser(deserializeUser);
 
 var facebookConfig = {
-  clientID     : process.env.FACEBOOK_CLIENT_ID,
-  clientSecret : process.env.FACEBOOK_CLIENT_SECRET,
+  clientID     : process.env.FACEBOOK_CLIENT_ID_PROJECT,
+  clientSecret : process.env.FACEBOOK_CLIENT_SECRET_PROJECT,
   callbackURL  : process.env.FACEBOOK_CALLBACK_URL
 };
 
@@ -110,9 +110,16 @@ app.get('/rest/allArts', function (req, res) {
 
 // functions for passport authentications:
 
+app.get("/auth/facebook",passport.authenticate('facebook'), facebookLogin);
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        successRedirect: '/#/profile',
+        failureRedirect: '/#/login'
+    }));
+
 function facebookLogin(token, refreshToken, profile, done){
   artistModel
-      .findFacebookUser(profile.id)
+      .findOne({'facebook.id': profile.id})
       .then(
           function(fbuser){
             if(fbuser) {
@@ -125,12 +132,17 @@ function facebookLogin(token, refreshToken, profile, done){
                   token: token,
                   id: profile.id,
                   displayName: profile.displayName
-                }
+                },
+                  email: "example@ex.com",
+                  name: profile.displayName.replace(/ /g,'')
               };
-              userModel
-                  .createUser(fbuser)
+                console.log(fbuser);
+                artistModel
+                  .create(fbuser)
                   .then(
                       function(artist){
+
+                          console.log("FBUSER CREATED!");
                         done(null,artist);
                       }
                   );
@@ -166,17 +178,17 @@ function serializeUser(artist, done) {
 }
 
 function deserializeUser(artist, done) {
-  console.log("5")
+  console.log("5");
   artistModel
-      .findArtistById(artist._id)
+      .findById(artist._id)
       .then(
           function(artist){
             done(null, artist);
-            console.log("6")
+            console.log(6);
           },
           function(error){
             done(error, null);
-            console.log("7")
+            console.log("7");
           }
       );
 }
@@ -192,22 +204,31 @@ app.get('/rest/artists/:email', function(req, res) {
   });
 });
 
+app.get('/rest/artist/:id', function(req, res) {
+    externalArtistDAO.service.findArtistById(req).then(function (response) {
+        res.send(response);
+    });
+});
+
 app.get('/rest/artist/', function(req, res) {
   externalArtistDAO.service.findArtistById(req).then(function (response) {
     res.send(response);
   });
 });
 
-app.get('/rest/logout/', function(req, res) {
-  externalArtistDAO.service.logout(req).then(function (response) {
-    res.send(response);
-  });
+app.post('/rest/logout', function(req, res) {
+    req.logout();
+    res.send(200);
 });
 
-app.get('/rest/loggedin/', function(req, res) {
-  externalArtistDAO.service.loggedIn(req).then(function (response) {
-    res.send(response);
-  });
+app.get('/rest/loggedin', function(req, res) {
+    if(req.isAuthenticated()){
+        console.log(req);
+        res.json(req.user);
+    }
+    else {
+        res.send('0');
+    }
 });
 
 

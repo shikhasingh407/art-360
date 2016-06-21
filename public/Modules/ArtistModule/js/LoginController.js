@@ -1,6 +1,6 @@
 (function () {
     angular
-        .module("FileUpload")
+        .module("art")
         .controller("LoginController", LoginController);
 
     function LoginController($location, ArtistService) {

@@ -1,5 +1,5 @@
 (function () {
-  angular.module("FileUpload").factory('ArtistService', ArtistService);
+  angular.module("art").factory('ArtistService', ArtistService);
 
   ArtistService.$inject = ['$http'];
 
@@ -44,7 +44,9 @@
         password: password
       };
 
-      return $http.post(url, artist).then(successfulProcess).catch(failedProcess);
+      return $http.post(url, artist)
+          .then(successfulProcess)
+          .catch(failedProcess);
     }
     function findArtistByUsernameAndPassword(username, password){
       var url = "/rest/artist?username="+username+"&password="+password;
