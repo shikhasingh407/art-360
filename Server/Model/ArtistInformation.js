@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 exports.ArtistInformationSchema = new Schema({
-  username: {type: String, required: true},
+  username: {type: String},
   email: {type: String, required: true, unique: true},
   password: {type: String},
   name: {type: String, required: true},
