@@ -8,8 +8,12 @@
   var fs = require('fs');
   var bcrypt = require("bcrypt-nodejs");
 
-  var externalArtistInformationJs = require("../Model/ArtistInformation.js");
+   var externalArtistInformationJs = require("../Model/ArtistInformation.js");
   var artistModel = mongoose.model('ArtistInformation', externalArtistInformationJs.ArtistInformationSchema);
+
+
+ // var externalBlogInformationJs = require("../Model/BlogInformation.js");
+  //var blogModel = mongoose.model('BlogInformation', externalBlogInformationJs.BlogInformationSchema);
 
   exports.service = {
     getArtistInformation: getArtistInformation,

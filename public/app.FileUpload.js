@@ -1,6 +1,6 @@
 (function () {
   angular
-      .module("art", ['ngAnimate', 'ngMaterial', 'ui.bootstrap', 'ngRoute'])
+      .module("art", ['ngRoute', 'ngAnimate','ngMaterial', 'ui.bootstrap', 'textAngular' ])
       .config(function ($mdThemingProvider) {
         // Extend the red theme with a few different colors
         var bootstrapPrimaryMap = $mdThemingProvider.extendPalette('blue', {
@@ -71,9 +71,7 @@
                   controllerAs: "portfolioCtrl"
               })
 
-
-
-              .
+                          .
           when('/art', {
             templateUrl: 'Modules/ArtUploadModule/UploadForm.html',
             controller: 'FileUploadController',
@@ -87,8 +85,23 @@
             templateUrl: 'Modules/ArtistModule/NewArtist.html',
             controller: 'ArtistController',
             controllerAs: 'artistCtrl'
-          }).
-          otherwise({
+          })
+              .when("/artist/:artistId/blog", {
+                  templateUrl: "Modules/BlogModule/blog-list.view.client.html",
+                  controller: "BlogListController",
+                  controllerAs: "model"
+              })
+              .when("/artist/:artistId/blog/new", {
+                  templateUrl: "Modules/BlogModule/blog-new.view.client.html",
+                  controller: "BlogNewController",
+                  controllerAs: "model"
+              })
+              .when("/artist/:artistId/blog/:blogId", {
+                  templateUrl: "Modules/BlogModule/blog-edit.view.client.html",
+                  controller: "BlogEditController",
+                  controllerAs: "model"
+              })
+              .otherwise({
             redirectTo: 'public/index.html'
           });
 

@@ -1,0 +1,27 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <p class="navbar-text pull-left">
+                <a href="#/artist/{{model.artistId}}/blog" class="navbar-link">
+                    <span class="glyphicon glyphicon-chevron-left">
+                    </span>
+                </a>
+            </p>
+            <a class="navbar-brand" href="#/artist/{{model.artistId}}/blog/new">
+                Welcome to blog centre
+            </a>
+        </div>
+    </div>
+</nav>
+<hr> <hr> <hr>
+<div class="container-fluid">
+    <ul class="list-group">
+           <li class="list-group-item borderless">
+            <a ng-click="model.createWidget('HTML')">
+                Let's create a new blog
+            </a>
+        </li>
+
+    </ul>
+</div>
+

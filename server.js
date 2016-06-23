@@ -16,6 +16,7 @@ var mongoose = require('mongoose');
 var fs = require('fs');
 var externalArtUploadJs = require("./Server/Model/ArtUpload.js");
 var externalArtistInformationJs = require("./Server/Model/ArtistInformation.js");
+var externalBlogInformationJs = require("./Server/Model/BlogInformation.js");
 var externalResources = require("./Server/resources/resources.js");
 
 var passport      = require('passport');
@@ -58,6 +59,10 @@ app.use(multer({dest: './uploads/'}).array('uploadedData'));
 app.get('/process', function (req, res) {
   res.json(process.env);
 });
+
+// congifuring the blog database
+
+var blogModel = mongoose.model('BlogInformation', externalBlogInformationJs.BlogInformationSchema);
 
 /*Run the server.*/
 var ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
@@ -263,4 +268,102 @@ app.delete('/rest/artists', function(req, res) {
   externalArtistDAO.service.deleteArtistInformation(req).then(function(response) {
     res.send(response);
   });
+});
+
+// CRUD operations for BLOG
+
+app.delete('/rest/blog/:blogId', function deleteBlog(req, res){
+    var id = req.params.blogId;
+    blogModel
+        .deleteBlog(id)
+        .then(
+            function(stats){
+                console.log(stats);
+                res.send(200);
+            },
+            function(error){
+                res.sendStatus(400);
+            });
+});
+
+app.put('/rest/blog/:blogId', function updateBlog(req, res){
+    var id = req.params.blogId;
+    var newBlog = req.body;
+    blogModel
+        .update({_id: id},{
+            $set: newBlog
+        })
+        .then(
+            function(newBlog) {
+                console.log(newBlog);
+                res.json(newBlog);
+            },
+            function(error) {
+                res.sendStatus(400);
+            }
+        );
+
+});
+
+app.post('/rest/artist/:artistId/blog', function createBlog(req, res){
+    var blog = req.body;
+
+    blogModel
+        .create(blog)
+        .then(
+            function(blog) {
+                res.json(blog);
+            },
+            function(err){
+                res.statusCode(400).send(err);
+            }
+        );
+
+});
+
+app.get('/rest/artist/:artistId/blog', function findBlogForArtistId(req, res){
+    var artistId = req.params.artistId;
+    blogModel
+        .find({"_artist": artistId})
+        .then(
+            function(blogs) {
+                console.log(blogs);
+                res.json(blogs);
+            },
+            function(error) {
+                res.sendStatus(400);
+            }
+        );
+    });
+
+app.get('/rest/blog/:blogId', function findBlogByBlogId(req, res){
+    var id = req.params.blogId;
+    blogModel
+        .findById(id)
+        .then(
+            function(blog){
+                console.log(blog);
+                res.json(blog);
+            },
+            function(error){
+                res.sendStatus(400);
+            }
+        );
+
+});
+
+app.put('/artist/:artistId/blog', function reorderBlog(req, res) {
+    var artistId = req.params.artistId;
+    var start = parseInt(req.query.start);
+    var end =  parseInt(req.query.end);
+
+    blogModel
+        .reorderBlog(start, end, artistId)
+        .then(
+            function (stats) {
+                res.sendStatus(200);
+            },
+            function (error) {
+                res.sendStatus(400);
+            });
 });
