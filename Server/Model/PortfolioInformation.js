@@ -1,0 +1,1 @@
+//name,desc,thumbnail (profile pic from my arts),

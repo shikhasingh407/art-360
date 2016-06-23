@@ -8,7 +8,6 @@
 
     function ProfileController($location, $routeParams, ArtistService, $rootScope) {
         var vm = this;
-        vm.userId = $routeParams.id;
         var id = $rootScope.currentArtist._id;
 
         //vm.updateUser = updateUser;
@@ -20,6 +19,7 @@
                 .findArtistById(id)
                 .then(function(response){
                     vm.artist = response.data;
+                    console.log(vm.artist);
                 });
         }
         init();

@@ -56,7 +56,7 @@
                       loggedIn: checkLoggedIn
                   }
               })
-              .when("/artist/:id", {
+              .when("/artist/:artistId", {
                 templateUrl: "Modules/home.html",
                 controller: "ProfileController",
                   controllerAs: "model",
@@ -64,6 +64,14 @@
                       loggedIn: checkLoggedIn
                   }
               })
+
+              .when("/artist/:id/portfolio", {
+                  templateUrl: "Modules/PortfolioModule/Portfolio.html",
+                  controller: "PortfolioController",
+                  controllerAs: "portfolioCtrl"
+              })
+
+
 
               .
           when('/art', {
