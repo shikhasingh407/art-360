@@ -42,7 +42,7 @@
                 .deleteBlog(vm.blogId)
                 .then(function (response) {
                     if (response.data)
-                        $location.url("/artist/" + vm.artistId + "/profile/" + vm.blogId + "/blog");
+                        $location.url("/artist/" + vm.artistId + "/blog");
                     else
                         vm.error = "Unable to delete the blog";
                 });

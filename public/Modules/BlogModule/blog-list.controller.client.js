@@ -17,10 +17,10 @@
                 .findBlogsForArtistId  (vm.artistId)
                 .then(function(response){
                     vm.blogs = response.data;
-                    //$(".container")
-                    //    .sortable({
-                    //        axis: 'y'
-                    //    });
+                    $(".container")
+                        .sortable({
+                            axis: 'y'
+                        });
                 });
         }
         init();

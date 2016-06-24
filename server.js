@@ -275,7 +275,7 @@ app.delete('/rest/artists', function(req, res) {
 app.delete('/rest/blog/:blogId', function deleteBlog(req, res){
     var id = req.params.blogId;
     blogModel
-        .deleteBlog(id)
+        .remove({_id: id})
         .then(
             function(stats){
                 console.log(stats);
