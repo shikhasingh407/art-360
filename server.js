@@ -27,6 +27,8 @@ var session       = require('express-session');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var bcrypt = require("bcrypt-nodejs");
 
+var GoogleStrategy = require('passport-google-oauth2').Strategy;
+
 app.use(express.static(__dirname + '/public'));
 app.use(cors());
 app.use(bodyParser.json());
@@ -40,9 +42,9 @@ passport.serializeUser(serializeUser);
 passport.deserializeUser(deserializeUser);
 
 var facebookConfig = {
-  clientID     : process.env.FACEBOOK_CLIENT_ID_PROJECT,
-  clientSecret : process.env.FACEBOOK_CLIENT_SECRET_PROJECT,
-  callbackURL  : process.env.FACEBOOK_CALLBACK_URL
+    clientID     : process.env.FACEBOOK_CLIENT_ID_PROJECT,
+    clientSecret : process.env.FACEBOOK_CLIENT_SECRET_PROJECT,
+    callbackURL  : process.env.FACEBOOK_CALLBACK_URL
 };
 
 passport.use(new FacebookStrategy(facebookConfig, facebookLogin));
@@ -55,9 +57,26 @@ var artistModel = mongoose.model('ArtistInformation', externalArtistInformationJ
 /*Configure the multer.*/
 app.use(multer({dest: './uploads/'}).array('uploadedData'));
 
+app.get("/auth/google", passport.authenticate('google', { scope: [
+    'https://www.googleapis.com/auth/plus.login',
+    'https://www.googleapis.com/auth/plus.profile.emails.read']
+}));
+app.get("/auth/google/callback", passport.authenticate('google', {
+    successRedirect: '/#/profile',
+    failureRedirect: '/#/login'
+}));
+
+var googleConfig = {
+    clientID     : process.env.GOOGLE_CLIENT_ID,
+    clientSecret : process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL  : process.env.GOOGLE_CALLBACK_URL,
+    passReqToCallback   : true
+};
+
+passport.use('google', new GoogleStrategy(googleConfig, googleLogin));
 
 app.get('/process', function (req, res) {
-  res.json(process.env);
+    res.json(process.env);
 });
 
 // congifuring the blog database
@@ -74,43 +93,43 @@ app.listen(port, ipAddress);
 // CRUD FUNCTION CALLS FOR ART
 
 app.post('/rest/upload', function (req, res) {
-  var artData = JSON.parse(req.body.artData);
-  artData.uploadedImages = [];
-  for (var i = 0; i < req.files.length; i++) {
-    var image = {
-      imageData: fs.readFileSync(req.files[i].path),
-      imageName: req.files[i].originalname,
-      fileName: req.files[i].filename,
-      path: req.files[i].path,
-      size: req.files[i].size,
-      encoding: req.files[i].encoding
-    };
-    artData.uploadedImages.push(image);
-    console.log(image);
-  }
-
-  var newArtObject = new artModel(artData);
-  newArtObject.save(function (error, data) {
-    if (error) {
-      res.send({error: error});
-    } else {
-      res.json(data);
+    var artData = JSON.parse(req.body.artData);
+    artData.uploadedImages = [];
+    for (var i = 0; i < req.files.length; i++) {
+        var image = {
+            imageData: fs.readFileSync(req.files[i].path),
+            imageName: req.files[i].originalname,
+            fileName: req.files[i].filename,
+            path: req.files[i].path,
+            size: req.files[i].size,
+            encoding: req.files[i].encoding
+        };
+        artData.uploadedImages.push(image);
+        console.log(image);
     }
-  });
+
+    var newArtObject = new artModel(artData);
+    newArtObject.save(function (error, data) {
+        if (error) {
+            res.send({error: error});
+        } else {
+            res.json(data);
+        }
+    });
 
 });
 
 
 app.get('/rest/allArts', function (req, res) {
-  var artistName = req.query['artistName'];
-  artModel.find({'artistName': artistName}, function (error, art) {
-    if (!error) {
-      res.send(art);
-    } else {
-      res.send(error)
-    }
+    var artistName = req.query['artistName'];
+    artModel.find({'artistName': artistName}, function (error, art) {
+        if (!error) {
+            res.send(art);
+        } else {
+            res.send(error)
+        }
 
-  });
+    });
 });
 
 // functions for passport authentications:
@@ -123,79 +142,116 @@ app.get('/auth/facebook/callback',
     }));
 
 function facebookLogin(token, refreshToken, profile, done){
-  artistModel
-      .findOne({'facebook.id': profile.id})
-      .then(
-          function(fbuser){
-            if(fbuser) {
-              return done(null, fbuser);
-            }
-            else {
-              fbuser = {
-                username: profile.displayName.replace(/ /g,''),
-                facebook: {
-                  token: token,
-                  id: profile.id,
-                  displayName: profile.displayName
-                },
-                  email: "example@ex.com",
-                  name: profile.displayName.replace(/ /g,'')
-              };
-                console.log(fbuser);
-                artistModel
-                  .create(fbuser)
-                  .then(
-                      function(artist){
+    artistModel
+        .findOne({'facebook.id': profile.id})
+        .then(
+            function(fbuser){
+                if(fbuser) {
+                    return done(null, fbuser);
+                }
+                else {
+                    fbuser = {
+                        username: profile.displayName.replace(/ /g,''),
+                        facebook: {
+                            token: token,
+                            id: profile.id,
+                            displayName: profile.displayName
+                        },
+                        email: "example@ex.com",
+                        name: profile.displayName.replace(/ /g,'')
+                    };
+                    console.log(fbuser);
+                    artistModel
+                        .create(fbuser)
+                        .then(
+                            function(artist){
 
-                          console.log("FBUSER CREATED!");
-                        done(null,artist);
-                      }
-                  );
+                                console.log("FBUSER CREATED!");
+                                done(null,artist);
+                            }
+                        );
+                }
             }
-          }
-      )
+        )
 }
 
-function localStrategy(username,password,done){
-  console.log("1");
-  artistModel
-      .findOne({email : username})
-      .then(
-          function(artist){
-            if(artist && password == artist.password) {
-              done (null, artist);
-            }
-            else{
-              done(null,false);
-            }
 
-          },
-          function(error){
-            done(error);
-            console.log("4")
-          }
-      );
+function googleLogin(request, accessToken, refreshToken, profile, done){
+    var id = {"email": profile.email};
+    artistModel
+        .findOne(id)
+        .then(
+            function(googleUser) {
+                if(googleUser) {
+                    done(null, googleUser);
+                } else {
+                    var email = profile.emails[0].value;
+                    var emailParts = email.split("@");
+                    var googleUser = {
+                        username: emailParts[0],
+                        name: emailParts[0],
+                        email: email,
+                        google: {
+                            id: profile.id,
+                            token: accessToken
+                        }
+                    };
+                    artistModel
+                        .create(googleUser)
+                        .then(
+                            function(artist){
+                                done(null,artist);
+                            },
+                            function(error){
+                                done(error,null);
+                            }
+                        );
+                }
+            },
+            function(error){
+                done(error,null);
+            }
+        );
+}
+
+
+function localStrategy(username,password,done){
+    var id = {"email":username};
+    artistModel
+        .findOne(id)
+        .then(
+            function(artist){
+                if(artist && password == artist.password) {
+                    done (null, artist);
+                }
+                else{
+                    done(null,false);
+                }
+
+            },
+            function(error){
+                done(error);
+                console.log("4")
+            }
+        );
 }
 
 function serializeUser(artist, done) {
-  done(null, artist);
-  console.log("4")
+    done(null, artist);
 }
 
 function deserializeUser(artist, done) {
-  console.log("5");
-  artistModel
-      .findById(artist._id)
-      .then(
-          function(artist){
-            done(null, artist);
-            console.log(6);
-          },
-          function(error){
-            done(error, null);
-            console.log("7");
-          }
-      );
+    console.log("5");
+    artistModel
+        .findById(artist._id)
+        .then(
+            function(artist){
+                done(null, artist);
+            },
+            function(error){
+                done(error, null);
+            }
+        );
 }
 
 
@@ -204,9 +260,9 @@ function deserializeUser(artist, done) {
 var externalArtistDAO = require('./Server/DAO/ArtistInformationDAO.js');
 
 app.get('/rest/artists/:email', function(req, res) {
-  externalArtistDAO.service.getArtistInformation(req).then(function (response) {
-    res.send(response);
-  });
+    externalArtistDAO.service.getArtistInformation(req).then(function (response) {
+        res.send(response);
+    });
 });
 
 app.get('/rest/artist/:id', function(req, res) {
@@ -216,9 +272,9 @@ app.get('/rest/artist/:id', function(req, res) {
 });
 
 app.get('/rest/artist/', function(req, res) {
-  externalArtistDAO.service.findArtistById(req).then(function (response) {
-    res.send(response);
-  });
+    externalArtistDAO.service.findArtistById(req).then(function (response) {
+        res.send(response);
+    });
 });
 
 app.post('/rest/logout', function(req, res) {
@@ -238,36 +294,36 @@ app.get('/rest/loggedin', function(req, res) {
 
 
 app.post('/rest/artist/', function(req) {
-  externalArtistDAO.service.createArtist(req).then(function (response) {
-    res.send(response);
-  });
+    externalArtistDAO.service.createArtist(req).then(function (response) {
+        res.send(response);
+    });
 });
 
 app.post('/rest/login', passport.authenticate('local'), function(req, res) {
-  var user = req.user;
-  console.log(user);
-  return res.json(user);
+    var user = req.user;
+    console.log(user);
+    return res.json(user);
 });
 
 
 
 app.post('/rest/artists', function(req, res) {
-  externalArtistDAO.service.postArtistInformation(req).then(function(response) {
-    res.send(response);
-  });
+    externalArtistDAO.service.postArtistInformation(req).then(function(response) {
+        res.send(response);
+    });
 });
 
 app.put('/rest/artists', function(req, res) {
-  externalArtistDAO.service.updateArtistInformation(req).then(function(response) {
-    res.send(response);
-  });
+    externalArtistDAO.service.updateArtistInformation(req).then(function(response) {
+        res.send(response);
+    });
 });
 
 
 app.delete('/rest/artists', function(req, res) {
-  externalArtistDAO.service.deleteArtistInformation(req).then(function(response) {
-    res.send(response);
-  });
+    externalArtistDAO.service.deleteArtistInformation(req).then(function(response) {
+        res.send(response);
+    });
 });
 
 // CRUD operations for BLOG
@@ -334,7 +390,7 @@ app.get('/rest/artist/:artistId/blog', function findBlogForArtistId(req, res){
                 res.sendStatus(400);
             }
         );
-    });
+});
 
 app.get('/rest/blog/:blogId', function findBlogByBlogId(req, res){
     var id = req.params.blogId;
